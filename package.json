@@ -14,13 +14,19 @@
     "type": "git",
     "url": "git+https://github.com/vladimir-ioshkin/frontend-project-lvl2.git"
   },
-  "author": "",
+  "author": "Vladimir Ioshkin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/vladimir-ioshkin/frontend-project-lvl2/issues"
   },
   "homepage": "https://github.com/vladimir-ioshkin/frontend-project-lvl2#readme",
   "dependencies": {
-    "commander": "^9.1.0"
+    "commander": "^9.1.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
   }
 }
