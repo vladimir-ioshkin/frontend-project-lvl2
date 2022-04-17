@@ -29,6 +29,10 @@ const genDiff = (filepath1, filepath2) => {
   const sortedKeys = _.sortBy(keys);
 
   let resultStr = '{\n';
+  const addStr = (symbol, key, value) => {
+    resultStr = `${resultStr}  ${symbol} ${key}: ${value}\n`;
+  };
+
   sortedKeys.forEach((key) => {
     const obj1HasKey = Object.prototype.hasOwnProperty.call(obj1, key);
     const obj2HasKey = Object.prototype.hasOwnProperty.call(obj2, key);
@@ -36,14 +40,14 @@ const genDiff = (filepath1, filepath2) => {
     const value2 = obj2[key];
 
     if (obj1HasKey && obj2HasKey && value1 === value2) {
-      resultStr = `${resultStr}    ${key}: ${value1}\n`;
+      addStr(' ', key, value1);
       return;
     }
     if (obj1HasKey) {
-      resultStr = `${resultStr}  - ${key}: ${value1}\n`;
+      addStr('-', key, value1);
     }
     if (obj2HasKey) {
-      resultStr = `${resultStr}  + ${key}: ${value2}\n`;
+      addStr('+', key, value2);
     }
   });
   resultStr = `${resultStr}}`;
