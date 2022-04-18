@@ -6,5 +6,7 @@
 ### Maintainability codeclimate status:
 [![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/vladimir-ioshkin/frontend-project-lvl2)
 
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/vladimir-ioshkin/frontend-project-lvl2)
+
 #### Сравнение плоских JSON-файлов
 [![asciicast](https://asciinema.org/a/ur6tACu1z9HSOhmVUAPw7Iz3e.svg)](https://asciinema.org/a/ur6tACu1z9HSOhmVUAPw7Iz3e)
