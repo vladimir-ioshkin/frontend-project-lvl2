@@ -2,23 +2,20 @@ import { cwd } from 'process';
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
 import _ from 'lodash';
-
-const extension = '.json';
+import parse from './parsers';
 
 const getObj = (filepath) => {
   const currentPath = cwd();
   const path = resolve(currentPath, filepath);
-  const isJSON = path.includes(extension);
-  if (!isJSON) {
-    throw new Error(`File «${filepath}» has incorrect extension`);
-  }
+  let fileString;
 
-  const fileString = readFileSync(path);
-  if (!fileString) {
+  try {
+    fileString = readFileSync(path);
+
+    return parse(fileString, path) || {};
+  } catch (error) {
     throw new Error(`File «${filepath}» not found`);
   }
-
-  return JSON.parse(fileString);
 };
 
 const genDiff = (filepath1, filepath2) => {
