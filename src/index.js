@@ -1,16 +1,16 @@
 import { cwd } from 'process';
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
-import _ from 'lodash';
-import parse from './parsers';
+import getDiff from './get-diff.js';
+import parse from './parsers.js';
+import stylish from './stylish.js';
 
 const getObj = (filepath) => {
   const currentPath = cwd();
   const path = resolve(currentPath, filepath);
-  let fileString;
 
   try {
-    fileString = readFileSync(path);
+    const fileString = readFileSync(path);
 
     return parse(fileString, path) || {};
   } catch (error) {
@@ -21,35 +21,9 @@ const getObj = (filepath) => {
 const genDiff = (filepath1, filepath2) => {
   const obj1 = getObj(filepath1);
   const obj2 = getObj(filepath2);
+  const diff = getDiff(obj1, obj2);
 
-  const keys = _.uniq([...Object.keys(obj1), ...Object.keys(obj2)]);
-  const sortedKeys = _.sortBy(keys);
-
-  let resultStr = '{\n';
-  const addStr = (symbol, key, value) => {
-    resultStr = `${resultStr}  ${symbol} ${key}: ${value}\n`;
-  };
-
-  sortedKeys.forEach((key) => {
-    const obj1HasKey = Object.prototype.hasOwnProperty.call(obj1, key);
-    const obj2HasKey = Object.prototype.hasOwnProperty.call(obj2, key);
-    const value1 = obj1[key];
-    const value2 = obj2[key];
-
-    if (obj1HasKey && obj2HasKey && value1 === value2) {
-      addStr(' ', key, value1);
-      return;
-    }
-    if (obj1HasKey) {
-      addStr('-', key, value1);
-    }
-    if (obj2HasKey) {
-      addStr('+', key, value2);
-    }
-  });
-  resultStr = `${resultStr}}`;
-
-  return resultStr;
+  return stylish(diff);
 };
 
 export default genDiff;
