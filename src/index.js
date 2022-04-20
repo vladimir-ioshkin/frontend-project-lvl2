@@ -18,12 +18,17 @@ const getObj = (filepath) => {
   }
 };
 
-const genDiff = (filepath1, filepath2) => {
+const genDiff = (filepath1, filepath2, formatter) => {
   const obj1 = getObj(filepath1);
   const obj2 = getObj(filepath2);
   const diff = getDiff(obj1, obj2);
 
-  return stylish(diff);
+  switch (formatter) {
+    case 'stylish':
+      return stylish(diff);
+    default:
+      return diff;
+  }
 };
 
 export default genDiff;
