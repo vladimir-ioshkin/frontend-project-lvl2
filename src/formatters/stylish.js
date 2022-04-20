@@ -7,11 +7,11 @@ const getStr = ({
 
   return [
     `${' '.repeat(depth * 4)}  ${symbol} ${key}: {`,
-    ...children.flatMap((item) => getStr(item, depth + 1)),
+    ...children.flat().flatMap((item) => getStr(item, depth + 1)),
     `${' '.repeat((depth + 1) * 4)}}`,
   ];
 };
 
-const stylish = (diff) => ['{', ...diff.flatMap((item) => getStr(item, 0)), '}'].join('\n');
+const stylish = (diff) => ['{', ...diff.flat().flatMap((item) => getStr(item, 0)), '}'].join('\n');
 
 export default stylish;

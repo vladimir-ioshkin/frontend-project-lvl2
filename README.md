@@ -16,3 +16,6 @@
 
 #### Глубокое сравнение файлов
 [![asciicast](https://asciinema.org/a/jPmkmYY59g96a79Va3Xu7fS8B.svg)](https://asciinema.org/a/jPmkmYY59g96a79Va3Xu7fS8B)
+
+#### Форматирование ответа "plain"
+[![asciicast](https://asciinema.org/a/bmjoAZwa3lgQjZjzDlzwMjzCo.svg)](https://asciinema.org/a/bmjoAZwa3lgQjZjzDlzwMjzCo)

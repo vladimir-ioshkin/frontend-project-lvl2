@@ -6,7 +6,7 @@ const getDiff = (obj1, obj2) => {
   const keys = _.union(Object.keys(obj1), Object.keys(obj2));
   const sortedKeys = _.sortBy(keys);
 
-  const result = sortedKeys.flatMap((key) => {
+  const result = sortedKeys.map((key) => {
     const obj1HasKey = Object.prototype.hasOwnProperty.call(obj1, key);
     const obj2HasKey = Object.prototype.hasOwnProperty.call(obj2, key);
     const value1 = obj1[key];

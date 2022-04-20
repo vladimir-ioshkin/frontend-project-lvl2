@@ -3,7 +3,7 @@ import { resolve } from 'path';
 import { readFileSync } from 'fs';
 import getDiff from './get-diff.js';
 import parse from './parsers.js';
-import stylish from './stylish.js';
+import getFormatter from './formatters/index.js';
 
 const getObj = (filepath) => {
   const currentPath = cwd();
@@ -18,17 +18,13 @@ const getObj = (filepath) => {
   }
 };
 
-const genDiff = (filepath1, filepath2, formatter) => {
+const genDiff = (filepath1, filepath2, formatName) => {
   const obj1 = getObj(filepath1);
   const obj2 = getObj(filepath2);
   const diff = getDiff(obj1, obj2);
+  const formatter = getFormatter(formatName);
 
-  switch (formatter) {
-    case 'stylish':
-      return stylish(diff);
-    default:
-      return diff;
-  }
+  return formatter(diff);
 };
 
 export default genDiff;
