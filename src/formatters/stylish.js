@@ -10,39 +10,64 @@ const getStr = (item, depth) => {
   const isObjectNextValue = isObject(nextValue);
   const isEqual = prevValue === nextValue;
 
-  const res = [];
+  if (!isObjectPrevValue && isEqual) {
+    return `${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`;
+  }
 
-  if (!isObjectPrevValue && prevValue === nextValue) {
-    res.push(`${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`);
+  if (hasPrevValue && hasNextValue && !isObjectPrevValue && !isEqual) {
+    return [
+      `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
+      `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
+    ];
   }
 
   if (isObjectPrevValue && isObjectNextValue) {
-    res.push(`${' '.repeat((depth + 1) * 4)}${key}: {`);
-    res.push(...children.flatMap((child) => getStr(child, depth + 1)));
-    res.push(`${' '.repeat((depth + 1) * 4)}}`);
+    return [
+      `${' '.repeat((depth + 1) * 4)}${key}: {`,
+      ...children.flatMap((child) => getStr(child, depth + 1)),
+      `${' '.repeat((depth + 1) * 4)}}`,
+    ];
   }
 
-  if (hasPrevValue && !isObjectPrevValue && !isEqual) {
-    res.push(`${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`);
+  if (hasPrevValue && !isObjectPrevValue && isObjectNextValue) {
+    return [
+      `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
+      `${' '.repeat(depth * 4)}  + ${key}: {`,
+      ...children.flatMap((child) => getStr(child, depth + 1)),
+      `${' '.repeat((depth + 1) * 4)}}`,
+    ];
   }
 
-  if (isObjectPrevValue && !isObjectNextValue) {
-    res.push(`${' '.repeat(depth * 4)}  - ${key}: {`);
-    res.push(...children.flatMap((child) => getStr(child, depth + 1)));
-    res.push(`${' '.repeat((depth + 1) * 4)}}`);
+  if (hasNextValue && isObjectPrevValue && !isObjectNextValue) {
+    return [
+      `${' '.repeat(depth * 4)}  - ${key}: {`,
+      ...children.flatMap((child) => getStr(child, depth + 1)),
+      `${' '.repeat((depth + 1) * 4)}}`,
+      `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
+    ];
   }
 
-  if (hasNextValue && !isObjectNextValue && !isEqual) {
-    res.push(`${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`);
+  if (hasPrevValue && !isObjectPrevValue && !isObjectNextValue) {
+    return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
   }
 
-  if (!isObjectPrevValue && isObjectNextValue) {
-    res.push(`${' '.repeat(depth * 4)}  + ${key}: {`);
-    res.push(...children.flatMap((child) => getStr(child, depth + 1)));
-    res.push(`${' '.repeat((depth + 1) * 4)}}`);
+  if (hasNextValue && !isObjectNextValue && !isObjectPrevValue) {
+    return `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`;
   }
 
-  return res;
+  if (!hasPrevValue && isObjectNextValue) {
+    return [
+      `${' '.repeat(depth * 4)}  + ${key}: {`,
+      ...children.flatMap((child) => getStr(child, depth + 1)),
+      `${' '.repeat((depth + 1) * 4)}}`,
+    ];
+  }
+
+  return [
+    `${' '.repeat(depth * 4)}  - ${key}: {`,
+    ...children.flatMap((child) => getStr(child, depth + 1)),
+    `${' '.repeat((depth + 1) * 4)}}`,
+  ];
 };
 
 const stylish = (diff) => ['{', ...diff.flatMap((item) => getStr(item, 0)), '}'].join('\n');
