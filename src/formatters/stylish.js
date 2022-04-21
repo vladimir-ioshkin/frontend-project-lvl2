@@ -47,14 +47,6 @@ const getStr = (item, depth) => {
     ];
   }
 
-  if (hasPrevValue && !isObjectPrevValue && !isObjectNextValue) {
-    return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
-  }
-
-  if (hasNextValue && !isObjectNextValue && !isObjectPrevValue) {
-    return `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`;
-  }
-
   if (!hasPrevValue && isObjectNextValue) {
     return [
       `${' '.repeat(depth * 4)}  + ${key}: {`,
@@ -63,11 +55,19 @@ const getStr = (item, depth) => {
     ];
   }
 
-  return [
-    `${' '.repeat(depth * 4)}  - ${key}: {`,
-    ...children.flatMap((child) => getStr(child, depth + 1)),
-    `${' '.repeat((depth + 1) * 4)}}`,
-  ];
+  if (isObjectPrevValue && !hasNextValue) {
+    return [
+      `${' '.repeat(depth * 4)}  - ${key}: {`,
+      ...children.flatMap((child) => getStr(child, depth + 1)),
+      `${' '.repeat((depth + 1) * 4)}}`,
+    ];
+  }
+
+  if (hasPrevValue && !isObjectPrevValue && !isObjectNextValue) {
+    return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
+  }
+
+  return `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`;
 };
 
 const stylish = (diff) => ['{', ...diff.flatMap((item) => getStr(item, 0)), '}'].join('\n');
