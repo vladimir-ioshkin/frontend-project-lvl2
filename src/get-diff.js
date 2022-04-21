@@ -14,26 +14,41 @@ const getDiff = (obj1, obj2) => {
     const isObjectValueObj1 = isObject(value1);
     const isObjectValueObj2 = isObject(value2);
 
-    const item = { key };
+    let item = { key };
 
     if (hasKeyObj1) {
-      item.prevValue = value1;
+      item = {
+        ...item,
+        prevValue: value1,
+      };
     }
 
     if (hasKeyObj2) {
-      item.nextValue = value2;
+      item = {
+        ...item,
+        nextValue: value2,
+      };
     }
 
     if (isObjectValueObj1 && isObjectValueObj2) {
-      item.children = getDiff(value1, value2);
+      item = {
+        ...item,
+        children: getDiff(value1, value2),
+      };
     }
 
     if (isObjectValueObj1 && !isObjectValueObj2) {
-      item.children = getDiff(value1, value1);
+      item = {
+        ...item,
+        children: getDiff(value1, value1),
+      };
     }
 
     if (isObjectValueObj2 && !isObjectValueObj1) {
-      item.children = getDiff(value2, value2);
+      item = {
+        ...item,
+        children: getDiff(value2, value2),
+      };
     }
 
     return item;

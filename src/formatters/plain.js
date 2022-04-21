@@ -9,7 +9,7 @@ const getValueText = (value) => {
   return typeof value === 'string' ? `'${value}'` : value;
 };
 
-const getStr = (result, item, path) => {
+const getStr = (item, path) => {
   const {
     key, children, prevValue, nextValue,
   } = item;
@@ -21,31 +21,26 @@ const getStr = (result, item, path) => {
   const nextPath = path ? `${path}.${key}` : key;
 
   if (isEqual) {
-    return;
+    return '';
   }
 
   if (isObjectPrevValue && isObjectNextValue && children) {
-    children.forEach((child) => getStr(result, child, nextPath));
-
-    return;
+    return children.flatMap((child) => getStr(child, nextPath));
   }
 
   const getText = () => (!hasPrevValue ? `was added with value: ${getValueText(nextValue)}` : 'was removed');
 
   if (!hasPrevValue || !hasNextValue) {
-    result.push(`Property '${nextPath}' ${getText()}`);
+    return `Property '${nextPath}' ${getText()}`;
   }
 
-  if (hasPrevValue && hasNextValue) {
-    result.push(`Property '${nextPath}' was updated. From ${getValueText(prevValue)} to ${getValueText(nextValue)}`);
-  }
+  return `Property '${nextPath}' was updated. From ${getValueText(prevValue)} to ${getValueText(nextValue)}`;
 };
 
 const plain = (diff) => {
-  const result = [];
-  diff.forEach((item) => getStr(result, item));
+  const result = diff.flatMap((item) => getStr(item));
 
-  return result.join('\n');
+  return result.filter((item) => item).join('\n');
 };
 
 export default plain;

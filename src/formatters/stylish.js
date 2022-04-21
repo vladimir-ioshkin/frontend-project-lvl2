@@ -10,45 +10,36 @@ const getStr = (item, depth) => {
   const isObjectNextValue = isObject(nextValue);
   const isEqual = prevValue === nextValue;
 
-  let res = [];
+  const res = [];
 
   if (!isObjectPrevValue && prevValue === nextValue) {
-    res = [...res, `${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`];
+    res.push(`${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`);
   }
 
   if (isObjectPrevValue && isObjectNextValue) {
-    res = [
-      ...res,
-      `${' '.repeat((depth + 1) * 4)}${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
+    res.push(`${' '.repeat((depth + 1) * 4)}${key}: {`);
+    res.push(...children.flatMap((child) => getStr(child, depth + 1)));
+    res.push(`${' '.repeat((depth + 1) * 4)}}`);
   }
 
   if (hasPrevValue && !isObjectPrevValue && !isEqual) {
-    res = [...res, `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`];
+    res.push(`${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`);
   }
 
   if (isObjectPrevValue && !isObjectNextValue) {
-    res = [
-      ...res,
-      `${' '.repeat(depth * 4)}  - ${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
+    res.push(`${' '.repeat(depth * 4)}  - ${key}: {`);
+    res.push(...children.flatMap((child) => getStr(child, depth + 1)));
+    res.push(`${' '.repeat((depth + 1) * 4)}}`);
   }
 
   if (hasNextValue && !isObjectNextValue && !isEqual) {
-    res = [...res, `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`];
+    res.push(`${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`);
   }
 
   if (!isObjectPrevValue && isObjectNextValue) {
-    res = [
-      ...res,
-      `${' '.repeat(depth * 4)}  + ${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
+    res.push(`${' '.repeat(depth * 4)}  + ${key}: {`);
+    res.push(...children.flatMap((child) => getStr(child, depth + 1)));
+    res.push(`${' '.repeat((depth + 1) * 4)}}`);
   }
 
   return res;
