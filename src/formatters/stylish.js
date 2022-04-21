@@ -10,11 +10,11 @@ const getStr = (item, depth) => {
   const isObjectNextValue = isObject(nextValue);
   const isEqual = prevValue === nextValue;
 
-  if (!isObjectPrevValue && isEqual) {
+  if (hasPrevValue && !isObjectPrevValue && isEqual) {
     return `${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`;
   }
 
-  if (hasPrevValue && hasNextValue && !isObjectPrevValue && !isEqual) {
+  if (hasPrevValue && hasNextValue && !isObjectPrevValue && !isObjectNextValue) {
     return [
       `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
       `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
@@ -63,7 +63,7 @@ const getStr = (item, depth) => {
     ];
   }
 
-  if (hasPrevValue && !isObjectPrevValue && !isObjectNextValue) {
+  if (hasPrevValue && !isObjectPrevValue) {
     return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
   }
 
