@@ -1,37 +1,49 @@
-const getValueText = (value, children) => {
-  if (children && typeof value === 'undefined') {
+import _ from 'lodash';
+import isObject from '../is-object.js';
+
+const getValueText = (value) => {
+  if (isObject(value)) {
     return '[complex value]';
   }
 
   return typeof value === 'string' ? `'${value}'` : value;
 };
 
-const getText = (symbol, value, children) => (symbol === '+' ? `was added with value: ${getValueText(value, children)}` : 'was removed');
-
-const getStr = (result, {
-  value, key, children, symbol,
-}, path) => {
+const getStr = (result, item, path) => {
+  const {
+    key, children, prevValue, nextValue,
+  } = item;
+  const isEqual = _.isEqual(prevValue, nextValue);
+  const hasPrevValue = Object.prototype.hasOwnProperty.call(item, 'prevValue');
+  const hasNextValue = Object.prototype.hasOwnProperty.call(item, 'nextValue');
+  const isObjectPrevValue = isObject(prevValue);
+  const isObjectNextValue = isObject(nextValue);
   const nextPath = path ? `${path}.${key}` : key;
 
-  if (symbol !== ' ') {
-    result.push(`Property '${nextPath}' ${getText(symbol, value, children)}`);
+  if (isEqual) {
+    return;
   }
 
-  if (children) {
-    children.forEach((items) => {
-      if (items.length === 1) {
-        getStr(result, items[0], nextPath);
-        return;
-      }
+  if (isObjectPrevValue && isObjectNextValue && children) {
+    children.forEach((child) => getStr(result, child, nextPath));
 
-      result.push(`Property '${nextPath}.${items[0].key}' was updated. From ${getValueText(items[0].value, items[0].children)} to ${getValueText(items[1].value, items[1].children)}`);
-    });
+    return;
+  }
+
+  const getText = () => (!hasPrevValue ? `was added with value: ${getValueText(nextValue)}` : 'was removed');
+
+  if (!hasPrevValue || !hasNextValue) {
+    result.push(`Property '${nextPath}' ${getText()}`);
+  }
+
+  if (hasPrevValue && hasNextValue) {
+    result.push(`Property '${nextPath}' was updated. From ${getValueText(prevValue)} to ${getValueText(nextValue)}`);
   }
 };
 
 const plain = (diff) => {
   const result = [];
-  diff.flat().forEach((item) => getStr(result, item));
+  diff.forEach((item) => getStr(result, item));
 
   return result.join('\n');
 };
