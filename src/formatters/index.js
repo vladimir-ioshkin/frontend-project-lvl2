@@ -1,17 +1,17 @@
 import stylish from './stylish.js';
 import plain from './plain.js';
 
-const getFormatter = (formatName) => {
+const getFormattedDiff = (diff, formatName) => {
   switch (formatName) {
     case 'stylish':
-      return stylish;
+      return stylish(diff);
     case 'plain':
-      return plain;
+      return plain(diff);
     case 'json':
-      return (diff) => JSON.stringify(diff);
+      return JSON.stringify(diff);
     default:
-      return stylish;
+      return stylish(diff);
   }
 };
 
-export default getFormatter;
+export default getFormattedDiff;

@@ -8,21 +8,46 @@
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/vladimir-ioshkin/frontend-project-lvl2)
 
+"Вычислитель отличий" - утилита для сравнения объектов, которая поддерживает несколько форматов файлов и вывода результата сраванения. Ниже приведены примеры работы программы.
+
+##### Поддерживаемые форматы файлов
+- json
+- yaml/yml
+
+##### Форматы вывода результата сравнения
+- stylish
+- plain
+- json
+
 ## Setup:
 ```sh
 git clone git@github.com:vladimir-ioshkin/frontend-project-lvl2.git
 cd frontend-project-lvl2
 make install
+```
+
+### Работа в режиме cli-утилиты
+Добавить исполняемые файлы в окружение Linux
+```sh
 npm link
 ```
 Получить справку
 ```sh
 gendiff -h
 ```
-
-### Сравнить файлы
+Сравнить файлы
 ```sh
 gendiff file1.json file2.yaml
+```
+
+### Работа в режиме js-библиотеки
+Импортировать библиотеку
+```sh
+import genDiff from '@hexlet/code';
+```
+Сравнить файлы
+```sh
+const diff = genDiff(filepath1, filepath2, format);
 ```
 
 ##### Сравнение плоских JSON-файлов
