@@ -25,56 +25,36 @@ const jsonFile1File2 = readFile('file1-file2-json.txt');
 const jsonFile1File1 = readFile('file1-file1-json.txt');
 const jsonFile1Empty = readFile('file1-empty-json.txt');
 
-test('stylish genDiff json', () => {
-  expect(genDiff(jsonFile1, jsonFile2, 'stylish')).toBe(stylishFile1File2);
-  expect(genDiff(jsonFile1, jsonFile1, 'stylish')).toBe(stylishFile1File1);
-  expect(genDiff(jsonFile1, jsonEmptyFile, 'stylish')).toBe(stylishFile1Empty);
-});
+test.each([
+  ['JSON', 'stylish', jsonFile1, jsonFile2, stylishFile1File2],
+  ['JSON', 'stylish', jsonFile1, jsonFile1, stylishFile1File1],
+  ['JSON', 'stylish', jsonFile1, jsonEmptyFile, stylishFile1Empty],
+  ['YAML', 'stylish', yamlFile1, yamlFile2, stylishFile1File2],
+  ['YAML', 'stylish', yamlFile1, yamlFile1, stylishFile1File1],
+  ['YAML', 'stylish', yamlFile1, yamlEmptyFile, stylishFile1Empty],
+  ['JSON and YAML', 'stylish', jsonFile1, yamlFile2, stylishFile1File2],
+  ['JSON and YAML', 'stylish', yamlFile1, jsonFile1, stylishFile1File1],
+  ['JSON and YAML', 'stylish', jsonEmptyFile, yamlEmptyFile, '{\n}'],
 
-test('stylish genDiff yaml', () => {
-  expect(genDiff(yamlFile1, yamlFile2, 'stylish')).toBe(stylishFile1File2);
-  expect(genDiff(yamlFile1, yamlFile1, 'stylish')).toBe(stylishFile1File1);
-  expect(genDiff(yamlFile1, yamlEmptyFile, 'stylish')).toBe(stylishFile1Empty);
-});
+  ['JSON', 'plain', jsonFile1, jsonFile2, plainFile1File2],
+  ['JSON', 'plain', jsonFile1, jsonFile1, ''],
+  ['JSON', 'plain', jsonFile1, jsonEmptyFile, plainFile1Empty],
+  ['YAML', 'plain', yamlFile1, yamlFile2, plainFile1File2],
+  ['YAML', 'plain', yamlFile1, yamlFile1, ''],
+  ['YAML', 'plain', yamlFile1, yamlEmptyFile, plainFile1Empty],
+  ['JSON and YAML', 'plain', jsonFile1, yamlFile2, plainFile1File2],
+  ['JSON and YAML', 'plain', yamlFile1, jsonFile1, ''],
+  ['JSON and YAML', 'plain', jsonEmptyFile, yamlEmptyFile, ''],
 
-test('stylish genDiff json and yaml', () => {
-  expect(genDiff(jsonFile1, yamlFile2, 'stylish')).toBe(stylishFile1File2);
-  expect(genDiff(yamlFile1, jsonFile1, 'stylish')).toBe(stylishFile1File1);
-  expect(genDiff(jsonEmptyFile, yamlEmptyFile, 'stylish')).toBe('{\n}');
-});
-
-test('plain genDiff json', () => {
-  expect(genDiff(jsonFile1, jsonFile2, 'plain')).toBe(plainFile1File2);
-  expect(genDiff(jsonFile1, jsonFile1, 'plain')).toBe('');
-  expect(genDiff(jsonFile1, jsonEmptyFile, 'plain')).toBe(plainFile1Empty);
-});
-
-test('plain genDiff yaml', () => {
-  expect(genDiff(yamlFile1, yamlFile2, 'plain')).toBe(plainFile1File2);
-  expect(genDiff(yamlFile1, yamlFile1, 'plain')).toBe('');
-  expect(genDiff(yamlFile1, yamlEmptyFile, 'plain')).toBe(plainFile1Empty);
-});
-
-test('plain genDiff json and yaml', () => {
-  expect(genDiff(jsonFile1, yamlFile2, 'plain')).toBe(plainFile1File2);
-  expect(genDiff(yamlFile1, jsonFile1, 'plain')).toBe('');
-  expect(genDiff(jsonEmptyFile, yamlEmptyFile, 'plain')).toBe('');
-});
-
-test('json stringify genDiff json', () => {
-  expect(genDiff(jsonFile1, jsonFile2, 'json')).toBe(jsonFile1File2);
-  expect(genDiff(jsonFile1, jsonFile1, 'json')).toBe(jsonFile1File1);
-  expect(genDiff(jsonFile1, jsonEmptyFile, 'json')).toBe(jsonFile1Empty);
-});
-
-test('json stringify genDiff yaml', () => {
-  expect(genDiff(yamlFile1, yamlFile2, 'json')).toBe(jsonFile1File2);
-  expect(genDiff(yamlFile1, yamlFile1, 'json')).toBe(jsonFile1File1);
-  expect(genDiff(yamlFile1, yamlEmptyFile, 'json')).toBe(jsonFile1Empty);
-});
-
-test('json stringify genDiff json and yaml', () => {
-  expect(genDiff(jsonFile1, yamlFile2, 'json')).toBe(jsonFile1File2);
-  expect(genDiff(yamlFile1, jsonFile1, 'json')).toBe(jsonFile1File1);
-  expect(genDiff(jsonEmptyFile, yamlEmptyFile, 'json')).toBe('[]');
+  ['JSON', 'json', jsonFile1, jsonFile2, jsonFile1File2],
+  ['JSON', 'json', jsonFile1, jsonFile1, jsonFile1File1],
+  ['JSON', 'json', jsonFile1, jsonEmptyFile, jsonFile1Empty],
+  ['YAML', 'json', yamlFile1, yamlFile2, jsonFile1File2],
+  ['YAML', 'json', yamlFile1, yamlFile1, jsonFile1File1],
+  ['YAML', 'json', yamlFile1, yamlEmptyFile, jsonFile1Empty],
+  ['JSON and YAML', 'json', jsonFile1, yamlFile2, jsonFile1File2],
+  ['JSON and YAML', 'json', yamlFile1, jsonFile1, jsonFile1File1],
+  ['JSON and YAML', 'json', jsonEmptyFile, yamlEmptyFile, '[]'],
+])('Testing of %s files "%s" format', (type, format, file1, file2, expected) => {
+  expect(genDiff(file1, file2, format)).toBe(expected);
 });
