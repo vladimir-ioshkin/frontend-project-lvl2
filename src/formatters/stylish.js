@@ -1,73 +1,53 @@
-import isObject from '../is-object.js';
-
 const getStr = (item, depth) => {
   const {
-    key, children, prevValue, nextValue,
+    key, children, prevValue, nextValue, type,
   } = item;
-  const hasPrevValue = Object.prototype.hasOwnProperty.call(item, 'prevValue');
-  const hasNextValue = Object.prototype.hasOwnProperty.call(item, 'nextValue');
-  const isObjectPrevValue = isObject(prevValue);
-  const isObjectNextValue = isObject(nextValue);
-  const isEqual = prevValue === nextValue;
 
-  if (hasPrevValue && !isObjectPrevValue && isEqual) {
-    return `${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`;
+  switch (type) {
+    case 'from-primitive-to-nothing':
+      return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
+    case 'from-nothing-to-primitive':
+      return `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`;
+    case 'from-primitive-to-primitive':
+      return [
+        `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
+        `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
+      ];
+    case 'from-object-to-nothing':
+      return [
+        `${' '.repeat(depth * 4)}  - ${key}: {`,
+        ...children.flatMap((child) => getStr(child, depth + 1)),
+        `${' '.repeat((depth + 1) * 4)}}`,
+      ];
+    case 'from-nothing-to-object':
+      return [
+        `${' '.repeat(depth * 4)}  + ${key}: {`,
+        ...children.flatMap((child) => getStr(child, depth + 1)),
+        `${' '.repeat((depth + 1) * 4)}}`,
+      ];
+    case 'from-object-to-object':
+      return [
+        `${' '.repeat((depth + 1) * 4)}${key}: {`,
+        ...children.flatMap((child) => getStr(child, depth + 1)),
+        `${' '.repeat((depth + 1) * 4)}}`,
+      ];
+    case 'from-object-to-primitive':
+      return [
+        `${' '.repeat(depth * 4)}  - ${key}: {`,
+        ...children.flatMap((child) => getStr(child, depth + 1)),
+        `${' '.repeat((depth + 1) * 4)}}`,
+        `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
+      ];
+    case 'from-primitive-to-object':
+      return [
+        `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
+        `${' '.repeat(depth * 4)}  + ${key}: {`,
+        ...children.flatMap((child) => getStr(child, depth + 1)),
+        `${' '.repeat((depth + 1) * 4)}}`,
+      ];
+    default:
+      return `${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`;
   }
-
-  if (hasPrevValue && hasNextValue && !isObjectPrevValue && !isObjectNextValue) {
-    return [
-      `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
-      `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
-    ];
-  }
-
-  if (isObjectPrevValue && isObjectNextValue) {
-    return [
-      `${' '.repeat((depth + 1) * 4)}${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
-  }
-
-  if (hasPrevValue && !isObjectPrevValue && isObjectNextValue) {
-    return [
-      `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
-      `${' '.repeat(depth * 4)}  + ${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
-  }
-
-  if (hasNextValue && isObjectPrevValue && !isObjectNextValue) {
-    return [
-      `${' '.repeat(depth * 4)}  - ${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-      `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
-    ];
-  }
-
-  if (!hasPrevValue && isObjectNextValue) {
-    return [
-      `${' '.repeat(depth * 4)}  + ${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
-  }
-
-  if (isObjectPrevValue && !hasNextValue) {
-    return [
-      `${' '.repeat(depth * 4)}  - ${key}: {`,
-      ...children.flatMap((child) => getStr(child, depth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
-  }
-
-  if (hasPrevValue && !isObjectPrevValue) {
-    return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
-  }
-
-  return `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`;
 };
 
 const stylish = (diff) => ['{', ...diff.flatMap((item) => getStr(item, 0)), '}'].join('\n');
