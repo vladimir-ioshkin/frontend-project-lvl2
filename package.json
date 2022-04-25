@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "type": "module",
-  "description": "[![Actions Status](https://github.com/vladimir-ioshkin/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/vladimir-ioshkin/frontend-project-lvl2/actions)",
+  "description": "Hexlet project: Gen diff",
   "bin": {
     "gendiff": "bin/gendiff.js"
   },

@@ -1,52 +1,59 @@
+import _ from 'lodash';
+
 const getStr = (item, depth) => {
   const {
     key, children, prevValue, nextValue, type,
   } = item;
 
+  const hasChildren = _.isArray(children);
+
+  if (!hasChildren) {
+    switch (type) {
+      case 'deleted':
+        return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
+      case 'added':
+        return `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`;
+      case 'updated':
+        return [
+          `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
+          `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
+        ];
+      default:
+        return `${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`;
+    }
+  }
+
   switch (type) {
-    case 'from-primitive-to-nothing':
-      return `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`;
-    case 'from-nothing-to-primitive':
-      return `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`;
-    case 'from-primitive-to-primitive':
-      return [
-        `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
-        `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
-      ];
-    case 'from-object-to-nothing':
+    case 'deleted':
       return [
         `${' '.repeat(depth * 4)}  - ${key}: {`,
         ...children.flatMap((child) => getStr(child, depth + 1)),
         `${' '.repeat((depth + 1) * 4)}}`,
       ];
-    case 'from-nothing-to-object':
+    case 'added':
       return [
         `${' '.repeat(depth * 4)}  + ${key}: {`,
         ...children.flatMap((child) => getStr(child, depth + 1)),
         `${' '.repeat((depth + 1) * 4)}}`,
       ];
-    case 'from-object-to-object':
-      return [
-        `${' '.repeat((depth + 1) * 4)}${key}: {`,
-        ...children.flatMap((child) => getStr(child, depth + 1)),
-        `${' '.repeat((depth + 1) * 4)}}`,
-      ];
-    case 'from-object-to-primitive':
-      return [
+    case 'updated':
+      return _.isPlainObject(prevValue) ? [
         `${' '.repeat(depth * 4)}  - ${key}: {`,
         ...children.flatMap((child) => getStr(child, depth + 1)),
         `${' '.repeat((depth + 1) * 4)}}`,
         `${' '.repeat(depth * 4)}  + ${key}: ${nextValue}`,
-      ];
-    case 'from-primitive-to-object':
-      return [
+      ] : [
         `${' '.repeat(depth * 4)}  - ${key}: ${prevValue}`,
         `${' '.repeat(depth * 4)}  + ${key}: {`,
         ...children.flatMap((child) => getStr(child, depth + 1)),
         `${' '.repeat((depth + 1) * 4)}}`,
       ];
     default:
-      return `${' '.repeat((depth + 1) * 4)}${key}: ${prevValue}`;
+      return [
+        `${' '.repeat((depth + 1) * 4)}${key}: {`,
+        ...children.flatMap((child) => getStr(child, depth + 1)),
+        `${' '.repeat((depth + 1) * 4)}}`,
+      ];
   }
 };
 
