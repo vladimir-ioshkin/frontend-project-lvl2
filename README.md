@@ -69,4 +69,4 @@ gendiff file1.json file2.yaml -f plain
 ```sh
 gendiff file1.json file2.yaml -f json
 ```
-[![asciicast](https://asciinema.org/a/PtA86s9vYkLjkQMU4ArPrNWSC.svg)](https://asciinema.org/a/PtA86s9vYkLjkQMU4ArPrNWSC)
+[![asciicast](https://asciinema.org/a/aWt3fQeCGvbZhPYmQpc4CaS9Z.svg)](https://asciinema.org/a/aWt3fQeCGvbZhPYmQpc4CaS9Z)
