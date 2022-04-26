@@ -9,33 +9,17 @@ const getDiff = (obj1, obj2) => {
     const hasKeyObj2 = _.has(obj2, key);
 
     if (hasKeyObj1 && !hasKeyObj2) {
-      const value = obj1[key];
-      const isObjectValue = _.isPlainObject(value);
-
-      return isObjectValue ? ({
+      return ({
         key,
-        value,
-        children: getDiff(value, value),
-        type: 'deleted',
-      }) : ({
-        key,
-        value,
+        value: obj1[key],
         type: 'deleted',
       });
     }
 
     if (!hasKeyObj1 && hasKeyObj2) {
-      const value = obj2[key];
-      const isObjectValue = _.isPlainObject(value);
-
-      return isObjectValue ? ({
+      return ({
         key,
-        value,
-        children: getDiff(value, value),
-        type: 'added',
-      }) : ({
-        key,
-        value,
+        value: obj2[key],
         type: 'added',
       });
     }
@@ -67,7 +51,6 @@ const getDiff = (obj1, obj2) => {
         key,
         value1,
         value2,
-        children: getDiff(value1, value1),
         type: 'updated',
       };
     }
@@ -77,7 +60,6 @@ const getDiff = (obj1, obj2) => {
         key,
         value1,
         value2,
-        children: getDiff(value2, value2),
         type: 'updated',
       };
     }
