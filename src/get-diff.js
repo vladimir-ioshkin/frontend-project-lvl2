@@ -14,12 +14,12 @@ const getDiff = (obj1, obj2) => {
 
       return isObjectValue ? ({
         key,
-        value: obj1[key],
+        value,
         children: getDiff(value, value),
         type: 'deleted',
       }) : ({
         key,
-        value: obj1[key],
+        value,
         type: 'deleted',
       });
     }
