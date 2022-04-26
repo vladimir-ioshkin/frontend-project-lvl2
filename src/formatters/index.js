@@ -1,7 +1,7 @@
 import stylish from './stylish.js';
 import plain from './plain.js';
 
-const getFormattedDiff = (diff, formatName) => {
+const getFormattedDiff = (diff, formatName = 'stylish') => {
   switch (formatName) {
     case 'stylish':
       return stylish(diff);
@@ -10,7 +10,7 @@ const getFormattedDiff = (diff, formatName) => {
     case 'json':
       return JSON.stringify(diff);
     default:
-      return 'Oops! Unknown format';
+      throw new Error('Unknown format');
   }
 };
 
