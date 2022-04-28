@@ -3,7 +3,7 @@ import _ from 'lodash';
 const step = 4;
 const getIndent = (depth) => ' '.repeat(depth * step);
 
-const getPropsStr = (name, props, symbol, depth) => {
+const getStringifyProps = (name, props, symbol, depth) => {
   const nextDepth = depth + 1;
   const indent = getIndent(depth);
   const nextIndent = getIndent(nextDepth);
@@ -16,12 +16,12 @@ const getPropsStr = (name, props, symbol, depth) => {
 
   return [
     `${indent}  ${symbol} ${name}: {`,
-    ...sortedEntries.flatMap(([key, value]) => getPropsStr(key, value, ' ', nextDepth)),
+    ...sortedEntries.flatMap(([key, value]) => getStringifyProps(key, value, ' ', nextDepth)),
     `${nextIndent}}`,
   ];
 };
 
-const getStr = (item, depth = 0) => {
+const getStringifyItem = (item, depth = 0) => {
   const {
     key, value, type, children,
   } = item;
@@ -30,27 +30,27 @@ const getStr = (item, depth = 0) => {
 
   switch (type) {
     case 'deleted':
-      return getPropsStr(key, value, '-', depth);
+      return getStringifyProps(key, value, '-', depth);
     case 'added':
-      return getPropsStr(key, value, '+', depth);
+      return getStringifyProps(key, value, '+', depth);
     case 'no-changes':
-      return getPropsStr(key, value, ' ', depth);
+      return getStringifyProps(key, value, ' ', depth);
     case 'has-children':
       return [
         `${nextIndent}${key}: {`,
-        ...children.flatMap((child) => getStr(child, nextDepth)),
+        ...children.flatMap((child) => getStringifyItem(child, nextDepth)),
         `${nextIndent}}`,
       ];
     case 'updated':
       return [
-        ...getPropsStr(key, value, '-', depth),
-        ...getPropsStr(key, item.newValue, '+', depth),
+        ...getStringifyProps(key, value, '-', depth),
+        ...getStringifyProps(key, item.newValue, '+', depth),
       ];
     default:
       throw new Error(`Unknown type «${type}»`);
   }
 };
 
-const stylish = (diff) => ['{', ...diff.flatMap((item) => getStr(item)), '}'].join('\n');
+const stylish = (diff) => ['{', ...diff.flatMap((item) => getStringifyItem(item)), '}'].join('\n');
 
 export default stylish;
