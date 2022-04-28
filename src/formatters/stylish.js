@@ -1,9 +1,7 @@
 import _ from 'lodash';
 
-const getIndent = (depth) => {
-  const step = 4;
-  return ' '.repeat(depth * step);
-};
+const step = 4;
+const getIndent = (depth) => ' '.repeat(depth * step);
 
 const getPropsStr = (name, props, symbol, depth) => {
   const nextDepth = depth + 1;
