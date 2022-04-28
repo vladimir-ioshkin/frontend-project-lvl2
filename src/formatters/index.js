@@ -10,7 +10,7 @@ const getFormattedDiff = (diff, formatName = 'stylish') => {
     case 'json':
       return JSON.stringify(diff);
     default:
-      throw new Error('Unknown format');
+      throw new Error(`Unknown format «${formatName}»`);
   }
 };
 

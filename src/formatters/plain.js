@@ -10,7 +10,7 @@ const getValueText = (value) => {
 
 const getStr = (item, path) => {
   const {
-    key, children, value, value1, value2, type,
+    key, children, value, type,
   } = item;
   const nextPath = path ? `${path}.${key}` : key;
 
@@ -22,9 +22,11 @@ const getStr = (item, path) => {
     case 'has-children':
       return children.flatMap((child) => getStr(child, nextPath));
     case 'updated':
-      return `Property '${nextPath}' was updated. From ${getValueText(value1)} to ${getValueText(value2)}`;
+      return `Property '${nextPath}' was updated. From ${getValueText(value)} to ${getValueText(item.newValue)}`;
+    case 'no-changes':
+      return null;
     default:
-      return '';
+      throw new Error(`Unknown type «${type}»`);
   }
 };
 

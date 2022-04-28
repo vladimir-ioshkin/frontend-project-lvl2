@@ -1,21 +1,34 @@
 import _ from 'lodash';
 
-const getStr = (item, depth) => {
-  const getPropsStr = (name, props, symbol, currentDepth) => {
-    if (!_.isPlainObject(props)) {
-      return [`${' '.repeat(depth * 4)}  ${symbol} ${name}: ${props}`];
-    }
+const getIndent = (depth) => {
+  const step = 4;
+  return ' '.repeat(depth * step);
+};
 
-    return [
-      `${' '.repeat(depth * 4)}  ${symbol} ${name}: {`,
-      ..._.sortBy(Object.entries(props)).flatMap(([key, value]) => getStr({ key, value, type: 'no-changes' }, currentDepth + 1)),
-      `${' '.repeat((depth + 1) * 4)}}`,
-    ];
-  };
+const getPropsStr = (name, props, symbol, depth) => {
+  const nextDepth = depth + 1;
+  const indent = getIndent(depth);
+  const nextIndent = getIndent(nextDepth);
 
+  if (!_.isPlainObject(props)) {
+    return [`${indent}  ${symbol} ${name}: ${props}`];
+  }
+
+  const sortedEntries = _.sortBy(Object.entries(props));
+
+  return [
+    `${indent}  ${symbol} ${name}: {`,
+    ...sortedEntries.flatMap(([key, value]) => getPropsStr(key, value, ' ', nextDepth)),
+    `${nextIndent}}`,
+  ];
+};
+
+const getStr = (item, depth = 0) => {
   const {
-    key, value, value1, value2, type, children,
+    key, value, type, children,
   } = item;
+  const nextDepth = depth + 1;
+  const nextIndent = getIndent(nextDepth);
 
   switch (type) {
     case 'deleted':
@@ -26,18 +39,20 @@ const getStr = (item, depth) => {
       return getPropsStr(key, value, ' ', depth);
     case 'has-children':
       return [
-        `${' '.repeat((depth + 1) * 4)}${key}: {`,
-        ...children.flatMap((child) => getStr(child, depth + 1)),
-        `${' '.repeat((depth + 1) * 4)}}`,
+        `${nextIndent}${key}: {`,
+        ...children.flatMap((child) => getStr(child, nextDepth)),
+        `${nextIndent}}`,
+      ];
+    case 'updated':
+      return [
+        ...getPropsStr(key, value, '-', depth),
+        ...getPropsStr(key, item.newValue, '+', depth),
       ];
     default:
-      return [
-        ...getPropsStr(key, value1, '-', depth),
-        ...getPropsStr(key, value2, '+', depth),
-      ];
+      throw new Error(`Unknown type «${type}»`);
   }
 };
 
-const stylish = (diff) => ['{', ...diff.flatMap((item) => getStr(item, 0)), '}'].join('\n');
+const stylish = (diff) => ['{', ...diff.flatMap((item) => getStr(item)), '}'].join('\n');
 
 export default stylish;

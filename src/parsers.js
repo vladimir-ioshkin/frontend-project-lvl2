@@ -1,10 +1,7 @@
 import yaml from 'js-yaml';
 
-const parse = (data, path) => {
-  const splittedPath = path.split('.');
-  const extension = splittedPath[splittedPath.length - 1];
-
-  switch (extension) {
+const parse = (data, format) => {
+  switch (format) {
     case 'json':
       return JSON.parse(data);
     case 'yaml':
@@ -12,7 +9,7 @@ const parse = (data, path) => {
     case 'yml':
       return yaml.load(data);
     default:
-      throw new Error('Data has incorrect extension');
+      throw new Error(`Data has incorrect format «${format}»`);
   }
 };
 
